@@ -1,6 +1,6 @@
 // Generic tool workflow: add files -> options -> run -> result. Three views: list, single, pages.
 import { h, icon, fmtBytes, plural, sniff, sniffPdfLoose, LIMITS, AppError, Cancelled, saveBlob, emit, announce, uiHost, tick, toRanges, parseIndexes } from './core.js';
-import { loadDoc, openRender, renderPage } from './pdfx.js';
+import { loadDoc, openRender, renderPage, ensureLibs } from './pdfx.js';
 
 const MAX_TOTAL = 200 * 1024 * 1024;
 const IMG_ACCEPT = 'image/jpeg,image/png,image/webp,image/gif,image/bmp,.jpg,.jpeg,.png,.webp,.gif,.bmp';
@@ -370,6 +370,7 @@ export function mountTool(root, tool, ctx = {}) {
     };
     try {
       await tick();
+      try { await ensureLibs(); } catch (e) { /* reported by L() */ }
       const res = await tool.run({ files: S.files, opts: { ...S.opts }, pages: S.pages, progress, signal: S.ac.signal, baseName: S.files[0] ? S.files[0].name : 'document' });
       if (S.ac.signal.aborted) throw new Cancelled();
       emit('run_done', { tool: tool.id, outputs: res.outputs.length, ms: Math.round(performance.now() - t0) });

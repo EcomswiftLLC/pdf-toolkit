@@ -11,6 +11,11 @@ export async function getPdfjs() {
   return _pdfjs;
 }
 
+// Libraries are loaded on demand by the host page (element.js); the standalone page loads them with script tags.
+let _libLoader = null;
+export const setLibLoader = f => { _libLoader = f; };
+export const ensureLibs = () => (_libLoader ? _libLoader() : Promise.resolve());
+
 export const L = () => {
   if (!window.PDFLib) throw new AppError('engine', 'The PDF engine did not load. Refresh the page and try again.');
   return window.PDFLib;
@@ -21,6 +26,7 @@ const BAD = 'This file could not be read as a PDF. It may be damaged or not a re
 
 // Load with pdf-lib. Encrypted files are rejected (never bypassed).
 export async function loadDoc(bytes) {
+  try { await ensureLibs(); } catch (e) { /* reported by L() below */ }
   const { PDFDocument, EncryptedPDFError } = L();
   try {
     return await PDFDocument.load(bytes, { updateMetadata: false, throwOnInvalidObject: false });
