@@ -42,7 +42,7 @@ export async function mount(el) {
   const [css] = await Promise.all([loadCss(), loadLibs()]);
   if (mine !== seq || !el.isConnected) return;
   const root = el.shadowRoot || el.attachShadow({ mode: 'open' });
-  root.innerHTML = '<style>:host{all:initial;display:block;width:100%}' + css + '</style>' +
+  root.innerHTML = '<style>:host{all:initial;display:block;width:100%;height:100%;overflow:auto}' + css + '</style>' +
     '<div class="root embed"><main class="wrap"><header id="head" class="head"></header><div id="main"></div><div id="related"></div><div id="trust"></div></main>' +
     '<div id="live" class="sr" role="status" aria-live="polite"></div></div>';
   setRoot(root, el);
