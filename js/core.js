@@ -142,11 +142,33 @@ export function toRanges(indexes) {
 
 // ---- output + download ----
 export const pdfBlob = bytes => new Blob([bytes], { type: 'application/pdf' });
-export function saveBlob(blob, filename) {
-  const url = URL.createObjectURL(blob);
+// Inside the Wix HTML embed the iframe sandbox has no "allow-downloads", so the browser blocks a normal
+// save. When embedded on ecomswiftllc.com the file bytes are handed to the host page (same device, never a
+// server), whose site script saves them. If the host does not answer within 2.5 s we fall back to a normal save.
+let hostOrigin = '';
+export function setHost(origin) { hostOrigin = origin || ''; }
+function nativeSave(url, filename) {
   const a = h('a', { href: url, download: filename, rel: 'noopener', style: 'display:none' });
   document.body.append(a); a.click();
   setTimeout(() => { a.remove(); }, 0);
+}
+export function saveBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  if (hostOrigin && window.parent && window.parent !== window) {
+    const id = Math.random().toString(36).slice(2);
+    let acked = false;
+    const onMsg = e => {
+      const d = e.data;
+      if (e.source === window.parent && d && d.source === 'pdf-toolkit-host' && d.type === 'saved' && d.id === id) { acked = true; removeEventListener('message', onMsg); }
+    };
+    addEventListener('message', onMsg);
+    blob.arrayBuffer().then(buf => {
+      try { window.parent.postMessage({ source: 'pdf-toolkit', type: 'save', id, name: filename, mime: blob.type, buffer: buf }, hostOrigin, [buf]); } catch (e) { /* fall back below */ }
+    });
+    setTimeout(() => { removeEventListener('message', onMsg); if (!acked) nativeSave(url, filename); }, 2500);
+    return url;
+  }
+  nativeSave(url, filename);
   return url; // caller may keep it for the "open in new tab" fallback, then revoke
 }
 

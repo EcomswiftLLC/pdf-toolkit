@@ -1,6 +1,6 @@
 // Router + page shell. ?tool=<id|slug> shows a tool; no tool shows the hub.
 // &embed=1 is for the Wix iframe; &base=<url> makes links point at Wix pages instead of this app.
-import { h, icon, emit, $ } from './core.js';
+import { h, icon, emit, $, setHost } from './core.js';
 import { TOOLS, SOON, CATEGORIES } from './tools.js';
 import { mountTool } from './flow.js';
 
@@ -8,6 +8,7 @@ const q = new URLSearchParams(location.search);
 const embed = q.get('embed') === '1';
 let base = q.get('base') || '';
 if (base && !/^https:\/\/(www\.)?ecomswiftllc\.com\//.test(base)) base = ''; // never link to arbitrary hosts
+if (embed && base) setHost(new URL(base).origin); // lets the Wix page save downloads the sandboxed iframe cannot
 document.body.classList.toggle('embed', embed);
 
 const baseSlash = () => base.replace(/\/?$/, '/');
