@@ -1,20 +1,21 @@
-// Router + page shell. ?tool=<id|slug> shows a tool; no tool shows the hub.
+// Router + page shell. run(opts) renders into the current root (see core.setRoot). ?tool=<id|slug> shows a tool; no tool shows the hub.
 // &embed=1 is for the Wix iframe; &base=<url> makes links point at Wix pages instead of this app.
 import { h, icon, emit, $, setHost } from './core.js';
 import { TOOLS, SOON, CATEGORIES } from './tools.js';
 import { mountTool } from './flow.js';
 
-const q = new URLSearchParams(location.search);
-const embed = q.get('embed') === '1';
-let base = q.get('base') || '';
+export function run(opts) {
+const { key, native } = opts;
+const embed = !!opts.embed;
+let base = opts.base || '';
 if (base && !/^https:\/\/(www\.)?ecomswiftllc\.com\//.test(base)) base = ''; // never link to arbitrary hosts
-if (embed && base) setHost(new URL(base).origin); // lets the Wix page save downloads the sandboxed iframe cannot
-document.body.classList.toggle('embed', embed);
+if (!native && embed && base) setHost(new URL(base).origin); // iframe mode only: the Wix page saves downloads the sandboxed iframe cannot
+if (!native) document.body.classList.toggle('embed', embed);
 
 const baseSlash = () => base.replace(/\/?$/, '/');
 const href = t => base ? baseSlash() + t.slug : `app.html?tool=${t.slug}${embed ? '&embed=1' : ''}`;
 const hubHref = () => base ? baseSlash().replace(/\/$/, '') : 'hub.html';
-const linkAttrs = { target: base ? '_top' : false };
+const linkAttrs = { target: base && !native ? '_top' : false };
 
 function card(t, soon) {
   const kids = [h('div', { class: 'ti' }, icon(t.icon)), h('h3', {}, t.name), h('p', {}, t.blurb)];
@@ -30,7 +31,7 @@ function trust() {
 }
 
 function hub() {
-  document.title = 'PDF Tools';
+  if (!native) document.title = 'PDF Tools';
   $('#head').replaceChildren(h('h1', {}, 'Free PDF tools'), h('p', { class: 'lede' }, 'Merge, split, compress, convert and edit PDFs right in your browser. Your files stay on your device.'));
   let cat = 'All', term = '';
   const sections = h('div', {});
@@ -56,7 +57,7 @@ function hub() {
 }
 
 function toolPage(t) {
-  document.title = `${t.name} | PDF Tools`;
+  if (!native) document.title = `${t.name} | PDF Tools`;
   $('#head').replaceChildren(
     h('p', { class: 'crumbs' }, h('a', { href: hubHref(), ...linkAttrs }, 'PDF Tools'), ' / ', t.name),
     h('h1', {}, t.name), h('p', { class: 'lede' }, t.blurb));
@@ -69,7 +70,6 @@ function toolPage(t) {
   emit('tool_loaded', { tool: t.id });
 }
 
-const key = q.get('tool');
 const t = key && TOOLS.find(x => x.id === key || x.slug === key);
 if (!key) hub();
 else if (t) toolPage(t);
@@ -78,4 +78,5 @@ else {
   $('#head').replaceChildren(h('h1', {}, soon ? soon.name : 'Tool not found'), h('p', { class: 'lede' }, soon ? 'This tool is coming soon.' : 'We could not find that tool.'));
   $('#main').replaceChildren(h('p', {}, h('a', { class: 'btn btn-primary', href: hubHref(), ...linkAttrs }, 'See all PDF tools')));
 }
-try { new ResizeObserver(() => emit('height', { height: Math.ceil(document.documentElement.scrollHeight) })).observe(document.body); } catch (e) { /* optional */ }
+if (!native) { try { new ResizeObserver(() => emit('height', { height: Math.ceil(document.documentElement.scrollHeight) })).observe(document.body); } catch (e) { /* optional */ } }
+}

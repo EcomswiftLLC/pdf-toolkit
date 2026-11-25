@@ -14,7 +14,11 @@ export class AppError extends Error {
 }
 export class Cancelled extends Error { constructor() { super('Cancelled'); this.code = 'cancelled'; } }
 
-export const $ = (s, r = document) => r.querySelector(s);
+// Where the UI lives: the document (standalone page) or a shadow root (native Wix custom element).
+let ROOT = document, HOST = window;
+export function setRoot(root, host) { ROOT = root; HOST = host || window; }
+export const uiHost = () => HOST;
+export const $ = (s, r = ROOT) => r.querySelector(s);
 export function h(tag, attrs, ...kids) {
   const el = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs || {})) {
@@ -176,6 +180,6 @@ export function saveBlob(blob, filename) {
 export function emit(type, data) {
   try { if (window.parent && window.parent !== window) window.parent.postMessage({ source: 'pdf-toolkit', type, ...data }, '*'); } catch (e) { /* ignore */ }
 }
-export function announce(msg) { const l = document.getElementById('live'); if (l) { l.textContent = ''; setTimeout(() => { l.textContent = msg; }, 30); } }
+export function announce(msg) { const l = ROOT.querySelector('#live'); if (l) { l.textContent = ''; setTimeout(() => { l.textContent = msg; }, 30); } }
 export const sleep = ms => new Promise(r => setTimeout(r, ms));
 export const tick = () => new Promise(r => setTimeout(r, 0)); // let the UI paint between heavy steps

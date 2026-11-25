@@ -1,5 +1,5 @@
 // Generic tool workflow: add files -> options -> run -> result. Three views: list, single, pages.
-import { h, icon, fmtBytes, plural, sniff, sniffPdfLoose, LIMITS, AppError, Cancelled, saveBlob, emit, announce, tick, toRanges, parseIndexes } from './core.js';
+import { h, icon, fmtBytes, plural, sniff, sniffPdfLoose, LIMITS, AppError, Cancelled, saveBlob, emit, announce, uiHost, tick, toRanges, parseIndexes } from './core.js';
 import { loadDoc, openRender, renderPage } from './pdfx.js';
 
 const MAX_TOTAL = 200 * 1024 * 1024;
@@ -19,7 +19,7 @@ export function mountTool(root, tool, ctx = {}) {
   input.addEventListener('change', () => { const f = [...input.files]; input.value = ''; addFiles(f); });
   const pick = () => input.click();
   const stop = e => e.preventDefault();
-  window.addEventListener('dragover', stop); window.addEventListener('drop', stop);
+  uiHost().addEventListener('dragover', stop); uiHost().addEventListener('drop', stop);
 
   // ---------- alerts ----------
   function clearAlerts() { alerts.replaceChildren(); }
