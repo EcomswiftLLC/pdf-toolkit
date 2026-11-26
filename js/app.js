@@ -19,8 +19,8 @@ const linkAttrs = { target: base && !native ? '_top' : false };
 
 function card(t, soon) {
   const kids = [h('div', { class: 'ti' }, icon(t.icon)), h('h3', {}, t.name), h('p', {}, t.blurb)];
-  if (soon) return h('li', {}, h('div', { class: 'tcard soon', role: 'group', 'aria-label': `${t.name}, coming soon` }, ...kids, h('span', { class: 'badge' }, 'Coming soon')));
-  return h('li', {}, h('a', { class: 'tcard', href: href(t), ...linkAttrs }, ...kids, h('span', { class: 'go' }, 'Open tool')));
+  if (soon) return h('li', {}, h('div', { class: 'tcard soon', 'data-cat': t.category, role: 'group', 'aria-label': `${t.name}, coming soon` }, ...kids, h('span', { class: 'badge' }, 'Coming soon')));
+  return h('li', {}, h('a', { class: 'tcard', 'data-cat': t.category, href: href(t), ...linkAttrs }, ...kids, h('span', { class: 'go' }, 'Open tool', icon('right'))));
 }
 
 function trust() {

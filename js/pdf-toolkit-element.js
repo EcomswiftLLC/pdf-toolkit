@@ -10,7 +10,7 @@
       var self = this; clearTimeout(this._t);
       this._t = setTimeout(function () {
         if (!self.isConnected || (!self.hasAttribute('tool') && !self.hasAttribute('hub'))) return;
-        import(BASE + 'js/element.bundle.js?v=3').then(function (m) { return m.mount(self); })
+        import(BASE + 'js/element.bundle.js?v=4').then(function (m) { return m.mount(self); })
           .catch(function () { self.textContent = 'The PDF tools could not load. Please refresh the page.'; });
       }, 40);
     }
