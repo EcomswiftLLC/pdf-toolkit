@@ -70,7 +70,7 @@ export const TOOLS = [
   },
   // ---------------------------------------------------------------- extract
   {
-    id: 'extract-pages', name: 'Extract Pages', blurb: 'Pull selected pages out of a PDF into a new, smaller file.', icon: 'extract', category: 'Organize',
+    id: 'extract-pages', name: 'Extract Pages from PDF', blurb: 'Pull selected pages out of a PDF into a new, smaller file.', icon: 'extract', category: 'Organize',
     accept: 'pdf', multi: false, view: 'pages', pagesMode: 'select', cta: s => { const n = s.pages.filter(p => p.sel).length; return n ? `Extract ${plural(n, 'page')}` : 'Extract pages'; }, ctaIcon: 'extract', working: 'Extracting pages…', downloadLabel: 'Download extracted PDF',
     status: s => { const n = s.pages.filter(p => p.sel).length; return n ? `${n} of ${s.pages.length} selected` : 'No pages selected yet'; },
     validate: s => s.pages.some(p => p.sel) ? null : 'Select at least one page to extract. Click a page, or type a range such as 1-3, 5.',
@@ -84,7 +84,7 @@ export const TOOLS = [
   },
   // ---------------------------------------------------------------- delete
   {
-    id: 'delete-pages', name: 'Delete Pages', blurb: 'Remove unwanted pages from a PDF and keep the rest.', icon: 'trash', category: 'Organize',
+    id: 'delete-pages', name: 'Delete Pages from PDF', blurb: 'Remove unwanted pages from a PDF and keep the rest.', icon: 'trash', category: 'Organize',
     accept: 'pdf', multi: false, view: 'pages', pagesMode: 'delete', cta: s => { const n = s.pages.filter(p => p.sel).length; return n ? `Delete ${plural(n, 'page')}` : 'Delete pages'; }, ctaIcon: 'trash', working: 'Removing pages…', downloadLabel: 'Download PDF',
     status: s => { const n = s.pages.filter(p => p.sel).length; return n ? `${n} of ${s.pages.length} marked for deletion` : 'No pages marked yet'; },
     validate: s => { const n = s.pages.filter(p => p.sel).length; if (!n) return 'Mark at least one page to delete. Click a page, or type a range such as 2-4.'; if (n === s.pages.length) return 'You marked every page. A PDF needs at least one page, so leave one unmarked.'; return null; },
@@ -98,7 +98,7 @@ export const TOOLS = [
   },
   // ---------------------------------------------------------------- reorder
   {
-    id: 'reorder-pages', name: 'Reorder Pages', blurb: 'Rearrange the pages of a PDF by dragging them or moving them with buttons.', icon: 'reorder', category: 'Organize',
+    id: 'reorder-pages', name: 'Reorder PDF Pages', blurb: 'Rearrange the pages of a PDF by dragging them or moving them with buttons.', icon: 'reorder', category: 'Organize',
     accept: 'pdf', multi: false, view: 'pages', pagesMode: 'reorder', cta: 'Save new order', ctaIcon: 'check', working: 'Reordering pages…', downloadLabel: 'Download PDF',
     status: s => s.pages.some((p, i) => p.i !== i) ? 'Order changed' : 'Original order',
     validate: s => s.pages.some((p, i) => p.i !== i) ? null : 'The pages are still in their original order. Drag a page, or use the arrow buttons, to change it.',
@@ -124,7 +124,7 @@ export const TOOLS = [
   },
   // ---------------------------------------------------------------- images -> pdf
   {
-    id: 'images-to-pdf', name: 'Images to PDF', blurb: 'Turn JPG, PNG and other images into a single PDF, one image per page.', icon: 'img2pdf', category: 'Convert',
+    id: 'images-to-pdf', name: 'JPG to PDF', blurb: 'Turn JPG, PNG, WebP and other images into a single PDF, one image per page.', icon: 'img2pdf', category: 'Convert',
     accept: 'image', multi: true, view: 'list', cta: s => `Create PDF from ${plural(s.files.length, 'image')}`, ctaIcon: 'img2pdf', working: 'Creating your PDF…', downloadLabel: 'Download PDF',
     options: [
       { key: 'size', type: 'seg', label: 'Page size', value: 'a4', choices: [{ v: 'a4', t: 'A4' }, { v: 'letter', t: 'US Letter' }, { v: 'fit', t: 'Match each image', d: 'Each page takes the shape of its image, with no margins.' }] },
@@ -222,7 +222,7 @@ export const TOOLS = [
   },
   // ---------------------------------------------------------------- page numbers
   {
-    id: 'page-numbers', name: 'Add Page Numbers', blurb: 'Stamp page numbers onto every page, with your choice of position and style.', icon: 'numbers', category: 'Edit',
+    id: 'page-numbers', name: 'Add Page Numbers to PDF', blurb: 'Stamp page numbers onto every page, with your choice of position and style.', icon: 'numbers', category: 'Edit',
     accept: 'pdf', multi: false, view: 'single', cta: 'Add page numbers', ctaIcon: 'numbers', working: 'Adding page numbers…', downloadLabel: 'Download numbered PDF',
     options: [
       { key: 'pos', type: 'select', label: 'Position', value: 'bc', choices: [{ v: 'bc', t: 'Bottom center' }, { v: 'br', t: 'Bottom right' }, { v: 'bl', t: 'Bottom left' }, { v: 'tc', t: 'Top center' }, { v: 'tr', t: 'Top right' }, { v: 'tl', t: 'Top left' }] },
@@ -253,7 +253,7 @@ export const TOOLS = [
   },
   // ---------------------------------------------------------------- watermark
   {
-    id: 'watermark', name: 'Add Watermark', blurb: 'Place a text watermark such as CONFIDENTIAL or DRAFT across your pages.', icon: 'watermark', category: 'Edit',
+    id: 'watermark', name: 'Add Watermark to PDF', blurb: 'Place a text watermark such as CONFIDENTIAL or DRAFT across your pages.', icon: 'watermark', category: 'Edit',
     accept: 'pdf', multi: false, view: 'single', cta: 'Add watermark', ctaIcon: 'watermark', working: 'Adding watermark…', downloadLabel: 'Download watermarked PDF',
     options: [
       { key: 'text', type: 'text', label: 'Watermark text', value: 'CONFIDENTIAL', placeholder: 'e.g. DRAFT', maxlength: 60, help: 'Letters, numbers and common punctuation (Latin characters).' },

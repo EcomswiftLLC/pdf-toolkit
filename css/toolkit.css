@@ -190,7 +190,7 @@ a.tcard:hover .go svg{transform:translateX(3px)}
 .is-hub .search input::placeholder{color:rgba(255,255,255,.66)}
 .is-hub .search input:focus{border-color:#fff;outline:2px solid rgba(255,255,255,.3)}
 .is-hub .search svg{color:rgba(255,255,255,.78)}
-.is-hub .cats .btn-quiet{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:999px;min-height:40px;padding:0 17px;font-weight:500}
+.is-hub .cats .btn-quiet{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:999px;min-height:44px;padding:0 17px;font-weight:500}
 .is-hub .cats .btn-quiet:hover{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.42)}
 .is-hub .cats .btn-quiet[aria-pressed="true"]{background:#fff;color:#1B2342;border-color:#fff;font-weight:600}
 .is-hub .tgrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
