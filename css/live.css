@@ -1,0 +1,62 @@
+/* Shared styles for the "live" tools (text, calculators, QR) and the combined tools hub. Same soft design system as toolkit.css. */
+.lt-panel{margin-top:0}
+.lt-panel+.lt-panel,.lt-stack+.lt-panel{margin-top:16px}
+.lt-stack{display:grid;gap:18px}
+.lt-cols{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:780px){.lt-cols{grid-template-columns:1fr}}
+.lt-field .t{display:block;font-weight:600;font-size:14.5px;margin-bottom:8px}
+fieldset.lt-field{border:0;padding:0;margin:0;min-width:0}
+fieldset.lt-field legend.t{padding:0}
+.field.area{display:block;max-width:none;min-height:140px;padding:12px 14px;line-height:1.5;resize:vertical}
+.field.mono,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px}
+.field[readonly]{background:#F8FAFF}
+.affix{display:flex;align-items:stretch;max-width:420px;border:1px solid var(--line-d);border-radius:12px;background:#fff;overflow:hidden}
+.affix:focus-within{outline:3px solid var(--blue-t);border-color:var(--blue)}
+.affix .field{border:0;border-radius:0;outline:0;flex:1;min-width:0;max-width:none}
+.affix .field:focus{outline:0}
+.affix .pre,.affix .suf{display:grid;place-items:center;padding:0 14px;background:#F4F6FD;color:var(--slate);font-weight:600;font-size:14.5px}
+.affix .pre{border-right:1px solid var(--line)}
+.affix .suf{border-left:1px solid var(--line)}
+.rgrow{display:flex;align-items:center;gap:14px;max-width:420px}
+.rg{flex:1;accent-color:var(--blue);min-height:32px}
+.rg-v{min-width:56px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.lt-check label{display:flex;gap:10px;align-items:center;font-weight:600;cursor:pointer;min-height:44px}
+.lt-check input{width:20px;height:20px;accent-color:var(--blue)}
+.lt-bar{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.lt-out .field.area{margin-top:0}
+
+/* results */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:0}
+.stat{padding:14px 14px 12px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,#fff,#F8FAFF)}
+.stat dt{color:var(--slate);font-size:13.5px;font-weight:500}
+.stat dd{margin:2px 0 0;font-size:24px;line-height:1.2;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.stat.big{grid-column:1/-1}
+.stat.big dd{font-size:32px}
+.stat .sh{display:block;color:var(--slate);font-size:13px;font-weight:400;letter-spacing:0;line-height:1.4;margin-top:2px}
+.answer{padding:20px 22px;border-radius:18px;border:1px solid #D3DEFF;background:linear-gradient(145deg,#F2F5FF,#fff)}
+.answer.empty .ans-v{color:var(--slate);font-size:18px;font-weight:500}
+.ans-l{color:var(--slate);font-size:14.5px;font-weight:500}
+.ans-v{margin-top:2px;font-size:clamp(28px,5vw,40px);font-weight:700;letter-spacing:-.03em;line-height:1.15;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.ans-s{margin-top:4px;color:var(--slate);font-size:14.5px}
+.ans-s:empty{display:none}
+.lt-empty{padding:26px 10px;text-align:center;color:var(--slate)}
+.lt-note{color:var(--slate);font-size:13.5px;margin-top:12px}
+
+/* tables (schedules, diffs) */
+.tbl-wrap{overflow:auto;max-height:420px;border:1px solid var(--line);border-radius:14px}
+table.dt{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+.dt th,.dt td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+.dt th:first-child,.dt td:first-child{text-align:left}
+.dt thead th{position:sticky;top:0;background:#F4F6FD;font-weight:600;color:var(--navy)}
+.dt tbody tr:last-child td{border-bottom:0}
+
+/* combined hub tile colours (data-cat = kit label) */
+.tcard[data-cat="Images"]{--t:143,168,255}
+.tcard[data-cat="QR codes"]{--t:126,224,195}
+.tcard[data-cat="Text"]{--t:255,158,196}
+.tcard[data-cat="Calculators"]{--t:255,213,138}
+.tcard[data-cat="PDF"]{--t:194,168,255}
+.kit-h{display:flex;align-items:baseline;gap:10px;margin:34px 0 14px}
+.kit-h:first-child{margin-top:0}
+.kit-h h2{font-size:20px}
+.kit-h span{color:var(--slate);font-size:14.5px}

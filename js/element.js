@@ -4,7 +4,13 @@
 import { setRoot } from './core.js';
 import { run } from './app.js';
 import { setLibLoader } from './pdfx.js';
-import RAW_CSS from '../css/toolkit.css';
+import BASE_CSS from '../css/toolkit.css';
+import LIVE_CSS from '../css/live.css';
+import K_IMAGE from '../css/kit-image.css';
+import K_TEXT from '../css/kit-text.css';
+import K_CALC from '../css/kit-calc.css';
+import K_QR from '../css/kit-qr.css';
+const KIT_CSS = [LIVE_CSS, K_IMAGE, K_TEXT, K_CALC, K_QR].join(String.fromCharCode(10));
 
 const BASE = new URL('../', import.meta.url).href;
 let cssPromise, libsPromise;
@@ -17,12 +23,13 @@ function loadScript(src) {
   });
 }
 // Some sites ship an AMD loader (define.amd); the UMD libraries would register there instead of on window.
+let KIT_MODE = false; // set per mount: true on /online-tools pages (the element has a kit attribute or hub=all)
 function loadLibs() {
   libsPromise ||= (async () => {
     const d = window.define; try { window.define = undefined; } catch (e) { /* ignore */ }
     try {
       await Promise.all([
-        window.PDFLib ? 0 : loadScript(BASE + 'vendor/pdf-lib.min.js'),
+        window.PDFLib || KIT_MODE ? 0 : loadScript(BASE + 'vendor/pdf-lib.min.js'), // the online-tools kits do not use pdf-lib
         window.fflate ? 0 : loadScript(BASE + 'vendor/fflate.js')
       ]);
     } finally { try { window.define = d; } catch (e) { /* ignore */ } }
@@ -36,7 +43,7 @@ function loadCss() {
       const f = document.createElement('link'); f.id = 'es-font'; f.rel = 'stylesheet';
       f.href = 'https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap'; document.head.append(f);
     }
-    return RAW_CSS.replace(/:root\s*\{/, ':host{').replace(/^html\s*\{[^}]*\}/m, '').replace(/body\.embed\b/g, '.root.embed').replace(/^body\s*\{/m, '.root{');
+    return (BASE_CSS.replace(/:root\s*\{/, ':host{').replace(/^html\s*\{[^}]*\}/m, '').replace(/body\.embed\b/g, '.root.embed').replace(/^body\s*\{/m, '.root{')) + KIT_CSS;
   });
   return cssPromise;
 }
@@ -63,6 +70,7 @@ function fit(el, root) {
 let seq = 0;
 export async function mount(el) {
   const mine = ++seq;
+  KIT_MODE = el.hasAttribute('kit') || el.getAttribute('hub') === 'all';
   setLibLoader(loadLibs);
   const css = await loadCss(); // the PDF libraries are NOT awaited: the hub never needs them, tool pages load them while the page draws
   if (mine !== seq || !el.isConnected) return;
@@ -72,7 +80,7 @@ export async function mount(el) {
     '<div class="root embed ' + mode + '"><main class="wrap"><header id="head" class="head"></header><div id="main"></div><div id="related"></div><div id="trust"></div></main>' +
     '<div id="live" class="sr" role="status" aria-live="polite"></div></div>';
   setRoot(root, el);
-  run({ key: el.getAttribute('tool') || '', base: el.getAttribute('base') || '', embed: true, native: true });
+  run({ key: el.getAttribute('tool') || '', hub: el.getAttribute('hub') || '', base: el.getAttribute('base') || '', embed: true, native: true });
   fit(el, root.querySelector('.root'));
   if (el.getAttribute('tool')) loadLibs().catch(() => { /* retried when a file is added */ });
 }

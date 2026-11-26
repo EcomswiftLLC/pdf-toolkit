@@ -3,14 +3,14 @@
   if (customElements.get('pdf-toolkit-app')) return;
   var BASE = 'https://ecomswiftllc.github.io/pdf-toolkit/';
   class PdfToolkitApp extends HTMLElement {
-    static get observedAttributes() { return ['tool', 'hub', 'base']; }
+    static get observedAttributes() { return ['tool', 'hub', 'base', 'kit']; }
     connectedCallback() { this.go(); }
     attributeChangedCallback() { this.go(); }
     go() {
       var self = this; clearTimeout(this._t);
       this._t = setTimeout(function () {
         if (!self.isConnected || (!self.hasAttribute('tool') && !self.hasAttribute('hub'))) return;
-        import(BASE + 'js/element.bundle.js?v=6').then(function (m) { return m.mount(self); })
+        import(BASE + (self.hasAttribute('kit') || self.getAttribute('hub') === 'all' ? 'js/element.all.bundle.js?v=1' : 'js/element.bundle.js?v=7')).then(function (m) { return m.mount(self); })
           .catch(function () { self.textContent = 'The PDF tools could not load. Please refresh the page.'; });
       }, 40);
     }
