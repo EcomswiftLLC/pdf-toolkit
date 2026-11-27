@@ -15,7 +15,8 @@ if (!native && embed && base) setHost(new URL(base).origin); // iframe mode only
 if (!native) document.body.classList.toggle('embed', embed);
 
 const baseSlash = () => base.replace(/\/?$/, '/');
-const href = t => base ? baseSlash() + t.slug : `app.html?tool=${t.slug}${embed ? '&embed=1' : ''}`;
+// On the combined hub (/online-tools) the PDF tools sit next to the kit tools but keep their own pages under /pdf-tools.
+const href = t => base ? ((hubAll && !t.kit) ? new URL(base).origin + '/pdf-tools/' : baseSlash()) + t.slug : `app.html?tool=${t.slug}${embed ? '&embed=1' : ''}`;
 const hubHref = () => base ? baseSlash().replace(/\/$/, '') : 'hub.html';
 const linkAttrs = { target: base && !native ? '_top' : false };
 
@@ -34,23 +35,26 @@ function trust(all) {
 
 function hubAllKits() {
   if (!native) document.title = 'Free online tools';
-  $('#head').replaceChildren(h('h1', {}, 'Free online tools'), h('p', { class: 'lede' }, 'Compress images, make QR codes, clean up text and run quick calculations right in your browser. Nothing is uploaded and there is no sign-up.'));
+  $('#head').replaceChildren(h('h1', {}, 'Free online tools'), h('p', { class: 'lede' }, 'Merge PDFs, compress images, make QR codes, clean up text and run quick calculations right in your browser. Nothing is uploaded and there is no sign-up.'));
   let cat = 'All', term = '';
-  try { const k = new URLSearchParams(location.search).get('kit'); const f = KITS.find(x => x.id === k); if (f) cat = f.label; } catch (e) { /* optional */ }
+  // The PDF tools lead the list; they are not part of KITS (the PDF-only bundle has no kits), so the hub adds them here.
+  const ALL = [{ id: 'pdf', label: 'PDF', title: 'PDF tools', tools: TOOLS }, ...KITS];
+  try { const k = new URLSearchParams(location.search).get('kit'); const f = ALL.find(x => x.id === k); if (f) cat = f.label; } catch (e) { /* optional */ }
   const sections = h('div', {});
   const input = h('input', { type: 'search', id: 'q', placeholder: 'Search tools', autocomplete: 'off', 'aria-label': 'Search tools' });
   const cats = h('div', { class: 'cats', role: 'group', 'aria-label': 'Filter by category' });
   const draw = () => {
-    const match = t => (cat === 'All' || t.category === cat) && (!term || (t.name + ' ' + t.blurb + ' ' + (t.keywords || '')).toLowerCase().includes(term));
+    const match = t => !term || (t.name + ' ' + t.blurb + ' ' + (t.keywords || '')).toLowerCase().includes(term);
     sections.replaceChildren(); let total = 0;
-    for (const k of KITS) {
+    for (const k of ALL) {
+      if (cat !== 'All' && k.label !== cat) continue;
       const list = k.tools.filter(match); if (!list.length) continue; total += list.length;
       sections.append(h('div', { class: 'kit-h' }, h('h2', {}, k.title), h('span', {}, `${list.length} ${list.length === 1 ? 'tool' : 'tools'}`)), h('ul', { class: 'tgrid' }, list.map(t => card(t))));
     }
     if (!total) { sections.append(h('p', { class: 'empty' }, `No tools match "${term}". Try a different word, such as compress, QR or percentage.`)); $('#live').textContent = 'No tools match your search.'; return; }
     $('#live').textContent = `${total} ${total === 1 ? 'tool' : 'tools'} shown`;
   };
-  ['All', ...KITS.map(k => k.label)].forEach(c => {
+  ['All', ...ALL.map(k => k.label)].forEach(c => {
     const b = h('button', { class: 'btn btn-quiet btn-sm', type: 'button', 'aria-pressed': String(c === cat), onclick: () => { cat = c; cats.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); draw(); } }, c);
     cats.append(b);
   });

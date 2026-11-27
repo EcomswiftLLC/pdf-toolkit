@@ -10,7 +10,7 @@
       var self = this; clearTimeout(this._t);
       this._t = setTimeout(function () {
         if (!self.isConnected || (!self.hasAttribute('tool') && !self.hasAttribute('hub'))) return;
-        import(BASE + (self.hasAttribute('kit') || self.getAttribute('hub') === 'all' ? 'js/element.all.bundle.js?v=1' : 'js/element.bundle.js?v=7')).then(function (m) { return m.mount(self); })
+        import(BASE + (self.hasAttribute('kit') || self.getAttribute('hub') === 'all' ? 'js/element.all.bundle.js?v=2' : 'js/element.bundle.js?v=7')).then(function (m) { return m.mount(self); })
           .catch(function () { self.textContent = 'The PDF tools could not load. Please refresh the page.'; });
       }, 40);
     }
